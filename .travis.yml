@@ -1,0 +1,32 @@
+language: php
+php:
+  - 5.4
+
+branches:
+  only:
+    - master
+
+env:
+  global:
+    # PAGODABOX_USERNAME
+    - secure: "HlcQj5Uc+2Wx1vVS3bUHyqT8fx1Q/Y37M0XxZQgxZGD1ktkyYgRgjh38tuvj\n52ZlyliAFh80pPdZYRCyGCGSKFq6r4f4xnEivY6Toqct8af+WjBykLVfLKgb\ncQvFbV0iKTbP16QPj+SfHrznMiZFcyICJQuqirz83vZs1qp6thQ="
+    # PAGODABOX_PASSWORD
+    - secure: "Tq4OOmMlGhZKog2YXZO7PFpIEuSEmKJstlssPAJieWpFJABemavn+dqvcwiS\nQPOsr4rCEjYUcBxHtBNn9cBPnoIJ6HsclOwgKOjOdk8LpthEEM3MbWAmOeHj\nG9EE/E6XnZubKsQSwVwWLZHjiPtn9umZucVYVrYT/sVCpmWZMv0="
+    # PAGODABOX_APP
+    - secure: "P0nzAlHc/1QPasC0OG8E0Co7z07zycAwRJZJs9dBhv/fH6J2vYZlYREgH0CK\ns9xhvrkmi5AfJc/0wqHb+Z1d8ZONIFbLU3R0Qt+9KvusCe6xk/2NXGvfMzE/\nrB4LyEO0pPgXSppKqfT1UBQ6zTmsGycg3OnfPVEjOgW2vjUw8NY="    
+
+script:
+  - echo 'Travis run' # tests would be here.
+  # deployment from here down.
+  - gem install pagoda
+  - pagoda --username=$PAGODABOX_USERNAME --password=$PAGODABOX_PASSWORD --app=$PAGODABOX_APP init
+  - ssh-keygen -N "" -f ~/.ssh/pagoda
+  - pagoda --username=$PAGODABOX_USERNAME --password=$PAGODABOX_PASSWORD --app=$PAGODABOX_APP key:push --file=$HOME/.ssh/pagoda.pub
+  - echo "Host git.pagodabox.com" >> ~/.ssh/config
+  - echo "   StrictHostKeyChecking no" >> ~/.ssh/config
+  - echo "   CheckHostIP no" >> ~/.ssh/config
+  - echo "   UserKnownHostsFile=/dev/null" >> ~/.ssh/config
+  - echo "   IdentityFile=${HOME}/.ssh/pagoda" >> ~/.ssh/config
+  - echo "   IdentitiesOnly yes" >> ~/.ssh/config
+  - git push --force pagoda master
+  - pagoda --username=$PAGODABOX_USERNAME --password=$PAGODABOX_PASSWORD --app=$PAGODABOX_APP deploy
