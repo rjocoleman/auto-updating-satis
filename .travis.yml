@@ -9,11 +9,11 @@ branches:
 env:
   global:
     # PAGODABOX_USERNAME
-    - secure: "VtxoE8EYd+ZM63ls3jEg83FNCkp1PgKKRIVyB+xSdx4GbLaaPR8yuXXSsBKc\njzAMq/5DX7AkjCbGRbH5z9oiOqM785sxXTkGGV9zwYmm3iKqLcXzbhnXJQUU\neMiontrVaGlpPncvGZSZjZnbDEI4Zh5GwiwHHUqcFSMrTUX1ZQQ="
+    - secure: "h/VfDkDVOmUArakQM6IgTV5DnrnjXlFSM0R7Spea0vE++97E1kuQYxzbflkr\n6aTQxbT7RLr0/F3r9Izae9dpmFJBRLrmIUja1faxVTCqJ5yj3d8xSKrnIQPF\nt+JfcRQ2uY3VQOwZ8h4uU+9buOsvY4DAPalF45vznetshpm65hs="
     # PAGODABOX_PASSWORD
-    - secure: "Jp2Um50rI06hmTHoKiiKjUrRNKHFVfuMDQcJJZRpFpKLPBvZPjPfItToWtGa\nSMKKx2LHt1iSt5goJyRsQZJh4wRJOB/sy9rAayDAYpp8mXyQdUi3z6WF6Y6Q\n4sg5DEgZAqU3gFuKOdeB4Li6RmuF95o7H8UrnoaJXofmFi8bWp4="
+    - secure: "agaXjfEgmKdu8Qhe6Ja/F+e9VWZQolWpQciTbhJXfcN9Lr279rKOWr72np9w\nIrJxeqLIGYnv0BXHzreDE3IvkQ2aj4rqD2hL8tgTt133VNIl8qhWXWHlx227\nmJOm66STh6jTaIzeri4RXQuGRaxfNiwWH4x4eJCDGlElhZ7qp2c="
     # PAGODABOX_APP
-    - secure: "P0nzAlHc/1QPasC0OG8E0Co7z07zycAwRJZJs9dBhv/fH6J2vYZlYREgH0CK\ns9xhvrkmi5AfJc/0wqHb+Z1d8ZONIFbLU3R0Qt+9KvusCe6xk/2NXGvfMzE/\nrB4LyEO0pPgXSppKqfT1UBQ6zTmsGycg3OnfPVEjOgW2vjUw8NY="    
+    - secure: "MqVeafPuLtRtp9xzkrFyUxC1Rx5L9dNFk98M9EP0/s6VCXGa3/4GuxajBm9A\nhZ5gImvJ8MGaMVjFViHU7P/umgrwp3ZJQ4xWgpcux1FjDiJi1krXMX86TZoR\nheUrUaIjgUuunJ7mJGhzdcdLUfSpG4chZndSt+k8GMW64Alzs1M="
 
 script:
   - echo 'Travis run' # tests would be here.
