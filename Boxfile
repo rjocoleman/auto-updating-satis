@@ -1,0 +1,20 @@
+global:
+  env:
+  - GITHUB_API_KEY: 
+
+web1:
+  name: satis-index
+  document_root: web/
+  shared_writable_dirs: [web]
+  php_date_timezone: "UTC"
+  php_extensions:
+    - zip
+  after_build:
+    - 'if [ ! -d bin ]; then mkdir bin; fi; if [ ! -f bin/composer.phar ]; then curl -s http://getcomposer.org/installer | php -- --install-dir=bin; fi; php bin/composer.phar install; exit 0;'
+    - 'if [ -n "$GITHUB_API_KEY" ]; then bin/composer.phar config --global github-oauth.github.com $GITHUB_API_KEY; fi;'
+    - 'php bin/composer.phar create-project composer/satis --stability=dev --prefer-dist; ln -s /var/www/satis/bin/satis /var/www/bin/satis;'
+  before_deploy:
+    - 'if [ -n "$GITHUB_API_KEY" ]; then bin/composer.phar config --global github-oauth.github.com $GITHUB_API_KEY; fi;'
+    - 'if [ ! -d web ]; then mkdir web; fi; php bin/satis build satis.json web --no-interaction;'
+  cron:
+    - '*/15 * * * *': 'if [ ! -d web ]; then mkdir web; fi; php bin/satis build satis.json web --no-interaction;'
