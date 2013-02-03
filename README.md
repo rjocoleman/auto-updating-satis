@@ -1,23 +1,75 @@
-# Magento Module Composer Repository #
+#Automatically updating Satis generator
 
-The URL of the repository is [packages.firegento.com](http://packages.firegento.com/).
+[Satis](https://github.com/composer/satis) is a tool to generate [Composer](http://getcomposer.org) repositories.  
+Satis scans a simple `json` configuration file and generates static files, it needs to be updated to stay relevant.  
 
-For further information on how to use composer for Magento modules, please visit the [Magento Composer Installer](https://github.com/magento-hackathon/magento-composer-installer) project.
+A common workflow is to keep the `satis.json` in a github repo, manually build and then deploy the static files.  
 
-This Repository uses [Satis](https://github.com/composer/satis).
-We probably should switch to a custom packagist repository instead of satis, but that requires more dedicated setup time and infrastructure.
-If you happen to want to sponsor that, please let us know.
+This repo contain's helpers to keep your Satis Composer repository on [PagodaBox](https://pagodabox.com/), as static files it will perform fine for a number of users in the free tier.  
+The Satis repository is built on deployment and then every 15 minutes.  
 
-## Want your Magento module published? ##
+Optionally [TravisCI](https://travis-ci.org) is utilized to provide continuious deployment, simply commit your changes to your `master` branch. Travis will pick up the build and push it out to PagodaBox where a rebuild will be automatically initiated.  
 
-1. Add a modman file to your module
-2. Add a `composer.json` to your module
-3. Create a pull request for the `satis.json`
+The only depencay is a `satis.json` in the root of your repo. No `composer.phar`, `composer.json` or `composer\satis` are required, these are handled automatically.  
+Github API key can be set so that `composer` doesn't fail when pulling information from github. (Only [60 unauthenticated requests per hour are allowed](http://developer.github.com/v3/#rate-limiting)).  
 
-Hint: Satis recognizes only annotated tags (`git tag -a`) as versions.
+Check out a demo of this repo here: [http://statis-packages.pagodabox.com/](http://statis-packages.pagodabox.com/)  
+Demo data borrowed from [https://github.com/magento-hackathon/composer-repository](https://github.com/magento-hackathon/composer-repository)
 
-## Building the packages.json ##
-You don't need this if you only want to have your module published...
+Please be aware PagodaBox charges may apply if you scale your app, or use more than the free tier allotted bandwidth or storage.
 
-- `php bin/satis build satis.json <build-dir>`
-- Copy the updated files to the `gh-pages`-branch and push them
+
+##Requirements:
+
+* Pagodabox Account (free or paid).
+* Travis-CI.org (for auto deployment)
+* Github account for API access.
+* Satis config as satis.json in the root of your project.
+
+
+### How is this useful for me?
+You've got some [Composer](http://getcomposer.org) packages that you want a private repo for, you don't want to use a private [Packagist](https://github.com/composer/packagist) but you also don't want to manage anything except your `satis.json`.
+
+
+##How to set up:
+
+* Set up a new PagodaBox app, it's reccomended to set up an extra collaborator account to do the deploys. Don't forget to add the collabirator to the App.  
+* Add an [environment variable](http://help.pagodabox.com/customer/portal/articles/175470#env_vars_dash) called `GITHUB_API_KEY` with a [Github OAuth Token](https://help.github.com/articles/creating-an-oauth-token-for-command-line-use) e.g. `curl -u 'GITHUB_USERNAME' -d '{"scopes":["repo"],"note":"Satis Indexer"}' \ https://api.github.com/authorizations` reccomend `repo` to allow access to private repos you can access. Use no scope for public read-only access.  
+* Put your satis.json, .travis.yml and Boxfile in a Github repo - all in the root.  
+* (_travis optinal_) Sign in to Travis CI and [activate the GitHub Service Hook](http://about.travis-ci.org/docs/user/getting-started/#Step-one%3A-Sign-in).  
+* (_travis optinal_) Update the [.travis.yml secure variables](http://about.travis-ci.org/docs/user/encryption-keys/#Encryption-keys) for your PagodaBox credentials and app name.  
+* Commit your changes to Github and deployment will happen automagically (or `git push pagoda master` if you're not using Travis).
+
+
+## Optional:
+
+* PagodaBox supports adding a domain name to your app.  
+* Actually adding useful tests to `.travis.yml` at your discretion.  
+* Don't use Travis at all and do a `git push pagoda master` instead.  
+* Make some kind of external rebuild trigger. This could be used for a GitHub Webhook on one of your packages repos or to manually rebuild in a hurry.   
+
+
+### Known issues:
+
+* PagodaBox's environment has some interesting constraints. Some (inelegant) hacks have been made in the `Boxfile` included to work around them.  
+* PagodaBox supports a minimum cron period of 15m.  
+* PagodaBox env variables are set via the GUI, as there is no way to do this via the command line and [the Boxfile is not secure](http://help.pagodabox.com/customer/portal/questions/784478-setting-env-variables-in-the-boxfile-) as it could be in public SCM.  
+* `after_success` is the ideal hook for Travis because tests pass _before_ deployment. However `after_success` does not fail on a non-zero exit status. If your deploy fails you won't get notified. To work around this `script` is used; Travis considers this a test run and notifies accordingly. _Restart build directly from travis to go again!_
+* Every deploy a new ssh key is generated by Travis and pushed to your PagodaBox account to allow for the git push. There is no programatic way to purge these [yet...](http://help.pagodabox.com/customer/portal/questions/784501-deleting-ssh-keys-via-the-command-line)  
+* If using Travis deployment and Pagodabox's auto deploy featurethen a deploy will be attempted twice, the second will fail but the first will succeed! If auto deloy is disabled this won't happen, so turn if off in Pagoda.  
+* Using Travis deployment Git history could be lost, so treat github as your source of truth.
+* Satis doesn't seem to respect our `cache-dir` so an additonal one has to be made writable.  
+* `satis-rebuild.php` is symlinked into `web/`, this is because web is a writable directory and can't have git managed code in it.
+
+
+## Contributing
+
+1. Fork it.
+2. Create your feature branch (`git checkout -b my-new-feature`).
+3. Commit your changes (`git commit -am 'Add some feature'`).
+4. Push to the branch (`git push origin my-new-feature`).
+5. Create new Pull Request.
+6. Explain why you think this belongs in the code here, and not inside your own gem that requires this one.
+
+Pull requests most graciously accepted.
+

@@ -15,7 +15,6 @@ web1:
     - 'export HOME=/var/www; if [ -n "$GITHUB_API_KEY" ]; then bin/composer.phar config --global github-oauth.github.com $GITHUB_API_KEY; fi;'
     - 'export HOME=/var/www; php bin/composer.phar create-project composer/satis --stability=dev --prefer-dist; ln -s /var/www/satis/bin/satis /var/www/bin/satis;'
   before_deploy:
-    - 'if [ ! -f /var/www/web/satis-rebuild.php ]; then ln -s /var/www/satis-rebuild.php /var/www/web/satis-rebuild.php; fi;'
     - 'export HOME=/var/www; if [ ! -d web ]; then mkdir web; fi; php bin/satis build satis.json web --no-interaction;'
   cron:
     - '*/15 * * * *': 'export HOME=/var/www; if [ ! -d web ]; then mkdir web; fi; php bin/satis build satis.json web --no-interaction;'
