@@ -1,3 +1,5 @@
+This is not going to be supported, reccomend you look at [https://github.com/rjocoleman/heroku-buildpack-satis-server](https://github.com/rjocoleman/heroku-buildpack-satis-server)
+
 #Automatically updating Satis generator
 
 [Satis](https://github.com/composer/satis) is a tool to generate [Composer](http://getcomposer.org) repositories.  
